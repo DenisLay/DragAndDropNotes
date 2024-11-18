@@ -1,0 +1,20 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.container {
+    position: relative;
+    width: 100%;
+    padding: 0 20px;
+    height: 100vh;
+    margin: auto;
+    background-color: #0b0423;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
