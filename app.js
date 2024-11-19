@@ -33,6 +33,7 @@ class NoteContainer {
         this.xPos = 10;
         this.yPos = 10;
         this.snapThreshold = 7;
+        this.notePositionManager = new NotePositionManager();
         this.movingObserver = new MutationObserver((mutations) => {
             let isCloseToTop = false;
             let isCloseToBottom = false;
@@ -60,6 +61,18 @@ class NoteContainer {
                         mutation.target.style.left = `${this.workspace.getClientRects()[0].width - mutation.target.getClientRects()[0].width}px`;
                         isCloseToRight = true;
                     }
+
+                    this.notes.forEach(note => {
+                        if (note.node != mutation.target) {
+                            let isReacts = this.notePositionManager.reactCurrentWith(mutation.target, note);
+
+                            if (isReacts) {
+                                note.node.classList.add('reacts');
+                            } else {
+                                note.node.classList.remove('reacts');
+                            }
+                        }
+                    });
                 }
             });
 
@@ -176,8 +189,6 @@ class NoteContainer {
 
         const snapLine = this.workspace.querySelector(lineClass);
 
-        console.log(snapLine);
-
         if (mode) {
             snapLine.classList.add('active');
         } else {
@@ -202,4 +213,46 @@ class NoteManager {
             this.container.pushNode(new Note('Content'));
         });
     }
+}
+
+class NotePositionManager {
+    reactCurrentWith(currentNote, otherNote) {
+        let currentNoteRect = currentNote.getClientRects()[0];
+        let otherNoteRect = otherNote.node.getClientRects()[0];
+
+        let isReactsWith = false;
+        let isCurrentLeftInside = false;
+        let isCurrentRightInside = false;
+        let isCurrentTopInside = false;
+        let isCurrentBottomInside = false;
+        
+        if (currentNoteRect.left >= otherNoteRect.left && (currentNoteRect.left < otherNoteRect.left + otherNoteRect.width)) {
+            isCurrentLeftInside = true;
+        }
+
+        if (currentNoteRect.left + currentNoteRect.width >= otherNoteRect.left && (currentNoteRect.left + currentNoteRect.width < otherNoteRect.left + otherNoteRect.width)) {
+            isCurrentRightInside = true;
+        }
+
+        if (currentNoteRect.top >= otherNoteRect.top && (currentNoteRect.top < otherNoteRect.top + otherNoteRect.height)) {
+            isCurrentTopInside = true;
+        }
+
+        if (currentNoteRect.top + currentNoteRect.height >= otherNoteRect.top && (currentNoteRect.top + currentNoteRect.height < otherNoteRect.top + otherNoteRect.height)) {
+            isCurrentBottomInside = true;
+        }
+
+        if ((isCurrentBottomInside && isCurrentRightInside) ||
+            (isCurrentBottomInside && isCurrentLeftInside) ||
+            (isCurrentTopInside && isCurrentRightInside) ||
+            (isCurrentTopInside && isCurrentLeftInside)) {
+                isReactsWith = true;
+            }
+
+        return isReactsWith;
+    }
+
+    /*reactCurrentWithBorder(currentNote, workspaceRect) {
+        return '';
+    }*/
 }

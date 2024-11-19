@@ -101,10 +101,11 @@
     left: 0;
     z-index: 2;
     width: 100%;
-    height: 3px;
-    background-color: #3692fc;
+    height: 0;
+    background-color: #07bdf5;
     opacity: 0;
     transition: all 0.2s cubic-bezier(0.215, 0.610, 0.355, 1);
+    border-radius: 20px;
 }
 
 .bottom-snapline {
@@ -113,10 +114,11 @@
     left: 0;
     z-index: 2;
     width: 100%;
-    height: 3px;
-    background-color: #3692fc;
+    height: 0;
+    background-color: #07bdf5;
     opacity: 0;
     transition: all 0.2s cubic-bezier(0.215, 0.610, 0.355, 1);
+    border-radius: 20px;
 }
 
 .left-snapline {
@@ -124,11 +126,12 @@
     top: 0;
     left: -2px;
     z-index: 2;
-    width: 3px;
+    width: 0;
     height: 100%;
-    background-color: #3692fc;
+    background-color: #07bdf5;
     opacity: 0;
     transition: all 0.2s cubic-bezier(0.215, 0.610, 0.355, 1);
+    border-radius: 20px;
 }
 
 .right-snapline {
@@ -136,26 +139,31 @@
     top: 0;
     right: -2px;
     z-index: 2;
-    width: 3px;
+    width: 0;
     height: 100%;
-    background-color: #3692fc;
+    background-color: #07bdf5;
     opacity: 0;
     transition: all 0.2s cubic-bezier(0.215, 0.610, 0.355, 1);
+    border-radius: 20px;
 }
 
 .top-snapline.active {
+    height: 3px;
     opacity: 1;
 }
 
 .bottom-snapline.active {
+    height: 3px;
     opacity: 1;
 }
 
 .left-snapline.active {
+    width: 3px;
     opacity: 1;
 }
 
 .right-snapline.active {
+    width: 3px;
     opacity: 1;
 }
 
@@ -170,6 +178,10 @@
     cursor: pointer;
     border-radius: 5px;
     /*transition: all 0.2s cubic-bezier(0.215, 0.610, 0.355, 1);*/
+}
+
+.note.reacts {
+    border: 2px solid #eb250b;
 }
 
 .note:hover {
