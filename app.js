@@ -62,14 +62,22 @@ class NoteContainer {
                         isCloseToRight = true;
                     }
 
+                    let workspaceRect = this.workspace.getBoundingClientRect();
+                    let currentRect = mutation.target.getClientRects()[0];
+
                     this.notes.forEach(note => {
                         if (note.node != mutation.target) {
                             let isReacts = this.notePositionManager.reactCurrentWith(mutation.target, note);
+                            let snapBy = this.notePositionManager.snapCurrentWith(mutation.target, note, this.snapThreshold);
 
-                            if (isReacts) {
-                                note.node.classList.add('reacts');
-                            } else {
-                                note.node.classList.remove('reacts');
+                            if (snapBy !== undefined) {
+                                if (snapBy.direction === 'top') {
+                                    let noteRect = note.node.getClientRects()[0];
+                                    mutation.target.style.top = `${noteRect.top + noteRect.height - workspaceRect.top}px`;
+                                } else if (snapBy.direction === 'bottom') {
+                                    let noteRect = note.node.getClientRects()[0];
+                                    mutation.target.style.top = `${noteRect.top - workspaceRect.top - currentRect.height - 2}px`;
+                                }
                             }
                         }
                     });
@@ -227,18 +235,22 @@ class NotePositionManager {
         let isCurrentBottomInside = false;
         
         if (currentNoteRect.left >= otherNoteRect.left && (currentNoteRect.left < otherNoteRect.left + otherNoteRect.width)) {
+            console.log('isCurrentLeftInside');
             isCurrentLeftInside = true;
         }
 
         if (currentNoteRect.left + currentNoteRect.width >= otherNoteRect.left && (currentNoteRect.left + currentNoteRect.width < otherNoteRect.left + otherNoteRect.width)) {
+            console.log('isCurrentRightInside');
             isCurrentRightInside = true;
         }
 
         if (currentNoteRect.top >= otherNoteRect.top && (currentNoteRect.top < otherNoteRect.top + otherNoteRect.height)) {
+            console.log('isCurrentTopInside');
             isCurrentTopInside = true;
         }
 
         if (currentNoteRect.top + currentNoteRect.height >= otherNoteRect.top && (currentNoteRect.top + currentNoteRect.height < otherNoteRect.top + otherNoteRect.height)) {
+            console.log('isCurrentBottomInside');
             isCurrentBottomInside = true;
         }
 
@@ -252,7 +264,51 @@ class NotePositionManager {
         return isReactsWith;
     }
 
-    /*reactCurrentWithBorder(currentNote, workspaceRect) {
+    snapCurrentWith(currentNote, otherNote, snapThreshold) {
+        let currentNoteRect = currentNote.getClientRects()[0];
+        let otherNoteRect = otherNote.node.getClientRects()[0];
+
+        let snapBy = { direction: undefined, subdirection: undefined };
+        let isCurrentLeftInside = false;
+        let isCurrentRightInside = false;
+        let isCurrentTopInside = false;
+        let isCurrentBottomInside = false;
+        
+        if (currentNoteRect.left >= otherNoteRect.left && (currentNoteRect.left < otherNoteRect.left + otherNoteRect.width)) {
+            isCurrentLeftInside = true;
+            snapBy.subdirection = 'left';
+        }
+
+        if (currentNoteRect.left + currentNoteRect.width >= otherNoteRect.left && (currentNoteRect.left + currentNoteRect.width < otherNoteRect.left + otherNoteRect.width)) {
+            isCurrentRightInside = true;
+            snapBy.subdirection = 'right';
+        }
+
+        if (currentNoteRect.top >= otherNoteRect.top && (currentNoteRect.top < otherNoteRect.top + otherNoteRect.height)) {
+            isCurrentTopInside = true;
+        }
+
+        if (currentNoteRect.top + currentNoteRect.height >= otherNoteRect.top && (currentNoteRect.top + currentNoteRect.height < otherNoteRect.top + otherNoteRect.height)) {
+            isCurrentBottomInside = true;
+        }
+
+        if (isCurrentLeftInside || isCurrentRightInside) {
+            //if (otherNoteRect.top - currentNoteRect.top - otherNoteRect.height <= snapThreshold) {
+            if (isCurrentTopInside) {
+                snapBy = {
+                    direction: 'top'
+                }
+            } else if (isCurrentBottomInside) {
+                snapBy = {
+                    direction: 'bottom'
+                }
+            }
+        }
+
+        return snapBy;
+    }
+
+    reactCurrentWithBorder(currentNote, workspaceRect) {
         return '';
-    }*/
+    }
 }
